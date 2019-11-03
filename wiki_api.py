@@ -84,13 +84,20 @@ def __remove_tables_and_scripts(tree):
 #
 # This function returns the content of the page in the format that you specified.
 def page_text(name, format, include_tables = False):
-    result = __api_GET_latest_page(name)
-    e = etree.fromstring(result)
-    if not include_tables:
-        e = __remove_tables_and_scripts(e)
-    if format == "html":
-        return str(etree.tostring(e))
-    elif format == "text":
-        return ''.join(e.itertext())
-    elif format == "list":
-        return ''.join(e.itertext()).split('\n')
+    try:
+        result = __api_GET_latest_page(name)
+    except:
+        print("API request failed.")
+    if result:
+        e = etree.fromstring(result)
+        if not include_tables:
+            e = __remove_tables_and_scripts(e)
+        if format == "html":
+            return str(etree.tostring(e))
+        elif format == "text":
+            return ''.join(e.itertext())
+        elif format == "list":
+            return ''.join(e.itertext()).split('\n')
+    else:
+        print("Failed to retrieve a page.")
+        return None
